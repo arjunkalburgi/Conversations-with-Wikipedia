@@ -23,13 +23,19 @@ class conversational_agent():
         self.wiki_wiki = wikipediaapi.Wikipedia('en')
 
     def prompt(self): 
-        raw_topic = input("Hello, what would you like to learn about? \n>>> ")
+        raw_topic = input("What would you like to learn about? \n>>> ")
 
         if raw_topic in ["quit", "close", "stop"]: 
             exit()
 
+        if "how" in raw_topic: 
+            print("Explaining 'how' is not yet supported.")
+            return 
+
         # set proper topic 
         self.__getTopic(raw_topic)
+
+        self.present_options()
 
     def __getTopic(self, topic):
         # if match
