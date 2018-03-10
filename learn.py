@@ -7,5 +7,7 @@ agent = conversational_agent()
 while True: 
     agent.prompt()
 
+    agent.present_options() 
+
     
 
