@@ -2,9 +2,8 @@
 
 # import re, requests, json, inquirer, unicodedata, Algorithmia, 
 
-import wikipedia, json
-import inquirer
-import wikipediaapi
+import wikipedia, wikipediaapi
+import inquirer, random
 
 from .hiddenkeys import username, password
 
@@ -24,7 +23,8 @@ class conversational_agent():
         self.interestList = []
 
     def prompt(self): 
-        raw_topic = input("What would you like to learn about? \n>>> ")
+        question = random.choice(["What would you like to learn about?", "What topic do you want to know more about?"])
+        raw_topic = input(question + " \n>>> ")
 
         if raw_topic in ["quit", "close", "stop"]: 
             exit()
@@ -62,9 +62,17 @@ class conversational_agent():
         choices.remove("References")
         choices.remove("External links")
 
+        question = random.choice(["Would you like to learn about any of these?",
+                                  "Are you interested in any of these?", 
+                                  "Which of these would you like to learn about?", 
+                                  "In "+self._topic+", I found these subtopics. What interests you?", 
+                                  "In "+self._topic+", I found these subtopics. Which would you like to learn about?", 
+                                  self._topic+" has some subtopics. What interests you?", 
+                                  self._topic+" has some subtopics. Which would you like to learn about?"])
+
         questions = [
             inquirer.Checkbox(self._topic,
-                              message="Would you like to learn about any of these?",
+                              message=question,
                               choices=choices,
                               ),
         ]
@@ -81,16 +89,20 @@ class conversational_agent():
             self.__startLearning(self.interestList[0])
 
     def __askfororder(self, interests):
+        question = random.choice(["Which would you like to learn about first?",
+                                  "Which of these would you like to learn about first?",
+                                  "Which one should I go over first?"])
+
         questions = [
             inquirer.List("learnnow",
-                            message="Which would you like to learn about first?",
+                            message=question,
                             choices=interests,
                             ),
         ]
 
         answer = inquirer.prompt(questions)
 
-        self.__startLearning(answer)
+        self.__startLearning(answer["learnnow"])
 
     def __startLearning(self, section):
         # does have subsections? 
@@ -98,3 +110,6 @@ class conversational_agent():
             # answer depth vs bredth 
 
         # start learning 
+        print(section)
+        print(self._page.section(section))
+        print(self.wiki_wiki_page.sections[section])
