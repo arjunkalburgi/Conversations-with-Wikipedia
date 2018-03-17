@@ -89,17 +89,17 @@ def SummarizeUrl(url):
     return summaries
 
 # MODIFIED FROM ORIGINAL
-def Summarize(title, text, num_sen):
+def Summarize(query, text, num_sen):
     sentences = split_sentences(text)
     indices = {c: i for i, c in enumerate(sentences)}
     keys = keywords(text)
-    titleWords = split_words(title)
+    queryWords = split_words(query)
 
     if len(sentences) <= 3:
         return sentences
 
     # score the sentences, use the top num_sen applicable 
-    ranks = score(sentences, titleWords, keys).most_common(num_sen)
+    ranks = score(sentences, queryWords, keys).most_common(num_sen)
     senrank = [rank[0] for rank in ranks]
 
     # order the applicable sentences back in the text's order
@@ -119,14 +119,14 @@ def grab_link(inurl):
     return None
 
 
-def score(sentences, titleWords, keywords):
+def score(sentences, queryWords, keywords):
     #score sentences based on different features
 
     senSize = len(sentences)
     ranks = Counter()
     for i, s in enumerate(sentences):
         sentence = split_words(s)
-        titleFeature = title_score(titleWords, sentence)
+        titleFeature = title_score(queryWords, sentence)
         sentenceLength = length_score(sentence)
         sentencePosition = sentence_position(i+1, senSize)
         sbsFeature = sbs(sentence, keywords)

@@ -6,6 +6,7 @@ import wikipedia, wikipediaapi
 import inquirer, random
 
 from .hiddenkeys import username, password
+from .pyteaser import Summarize
 
 from watson_developer_cloud import NaturalLanguageUnderstandingV1 as watson
 from watson_developer_cloud.natural_language_understanding_v1 import Features, ConceptsOptions, EntitiesOptions, KeywordsOptions, RelationsOptions, SemanticRolesOptions
@@ -43,7 +44,7 @@ class conversational_agent():
         if topic in wikipedia.search(topic):
             print("Pulling from wiki page on " + topic + ".")
             self._topic = topic
-            self._page = wikipedia.WikipediaPage(self._topic)
+            self.wiki_page = wikipedia.WikipediaPage(self._topic)
             self.wiki_wiki_page = self.wiki_wiki.page(self._topic)
 
         # if close match
@@ -104,12 +105,22 @@ class conversational_agent():
 
         self.__startLearning(answer["learnnow"])
 
-    def __startLearning(self, section):
-        # does have subsections? 
-            # present subsection options 
-            # answer depth vs bredth 
+    def __startLearning(self, sectionname):
+        section = next((x for x in self.wiki_wiki_page.sections if x.title == sectionname), None)
 
-        # start learning 
-        print(section)
-        print(self._page.section(section))
-        print(self.wiki_wiki_page.sections[section])
+        if not section.sections:
+            self.__learnSection(section)
+            pass
+        else:
+            self.__learnSubsection(section)
+            pass
+
+    def __learnSection(self, sectionObject): 
+        pass 
+        # present "subsection option summary"
+        # answer subsection depth vs bredth
+
+    def __learnSubsection(self, sectionObject): 
+        pass 
+        # present regular summary
+        # answer depth vs bredth
