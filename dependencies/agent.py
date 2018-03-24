@@ -5,7 +5,7 @@
 import wikipedia, wikipediaapi
 import inquirer, random
 
-from .hiddenkeys import username, password
+from .hiddenkeysfilled import username, password
 from .pyteaser import Summarize
 
 from watson_developer_cloud import NaturalLanguageUnderstandingV1 as watson
@@ -24,7 +24,9 @@ class conversational_agent():
         self.interestList = []
 
     def prompt(self): 
-        question = random.choice(["What would you like to learn about?", "What topic do you want to know more about?"])
+        question = random.choice(["What would you like to learn about?",
+                                  "What topic do you want to know more about?", 
+                                  "What do you want to learn about?"])
         raw_topic = input(question + " \n>>> ")
 
         if raw_topic in ["quit", "close", "stop"]: 
@@ -37,6 +39,11 @@ class conversational_agent():
         # set proper topic 
         self.__getTopic(raw_topic)
 
+        # read summary 
+        if self.wiki_wiki_page.summary != "":
+            print(Summarize(self._topic, self.wiki_wiki_page.summary))
+
+        # present subtopic options 
         self.__present_options()
 
     def __getTopic(self, topic):
@@ -58,14 +65,18 @@ class conversational_agent():
             exit()
 
     def __present_options(self): 
+
         choices = [section.title for section in self.wiki_wiki_page.sections]
         choices.remove("See also")
         choices.remove("References")
         choices.remove("External links")
+        choices.append("Other")
+        choices.append("None of these")
 
         question = random.choice(["Would you like to learn about any of these?",
                                   "Are you interested in any of these?", 
                                   "Which of these would you like to learn about?", 
+                                  "Here are a list of subtopics I found about "+self._topic+", which of these intrigue you?",
                                   "In "+self._topic+", I found these subtopics. What interests you?", 
                                   "In "+self._topic+", I found these subtopics. Which would you like to learn about?", 
                                   self._topic+" has some subtopics. What interests you?", 
@@ -79,6 +90,13 @@ class conversational_agent():
         ]
 
         answers = inquirer.prompt(questions)
+
+        if "Other" in answers: 
+            print("Other is not implemented yet")
+            exit 
+        if "None of these" in answers: 
+            print("What to do here is not implemented yet")
+            exit 
 
         self.interestList = self.interestList + [self._topic + "::" + interest for interest in answers[self._topic]]
 
@@ -110,17 +128,16 @@ class conversational_agent():
 
         if not section.sections:
             self.__learnSection(section)
-            pass
         else:
             self.__learnSubsection(section)
-            pass
 
     def __learnSection(self, sectionObject): 
-        pass 
-        # present "subsection option summary"
-        # answer subsection depth vs bredth
+        # goes here when page section does not have subsections 
+        # create summary using section 
+        # def __requestion(self, )        
 
     def __learnSubsection(self, sectionObject): 
-        pass 
-        # present regular summary
-        # answer depth vs bredth
+        # goes here when page section has subsections
+        # get all subsection titles 
+        # create summary using subsection titles as query 
+        # def __requestion(self, )        
