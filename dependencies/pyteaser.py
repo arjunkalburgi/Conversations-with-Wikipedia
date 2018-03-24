@@ -9,7 +9,7 @@
 # coding=utf-8
 from collections import Counter
 from operator import itemgetter
-from math import fabs
+from math import fabs, floor
 from re import split as regex_split, sub as regex_sub, UNICODE as REGEX_UNICODE
 
 stopWords = set([
@@ -89,8 +89,11 @@ def SummarizeUrl(url):
     return summaries
 
 # MODIFIED FROM ORIGINAL
-def Summarize(query, text, num_sen):
+def Summarize(query, text, num_sen=None):
     sentences = split_sentences(text)
+    if num_sen is None: 
+        num_sen = floor(len(sentences) / 5)
+
     indices = {c: i for i, c in enumerate(sentences)}
     keys = keywords(text)
     queryWords = split_words(query)
