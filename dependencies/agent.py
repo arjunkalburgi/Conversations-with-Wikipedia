@@ -46,6 +46,9 @@ class conversational_agent():
         # present subtopic options 
         self.__present_options()
 
+        # anything more 
+        self.__anymore_questions()
+
     def __getTopic(self, topic):
         # if match
         if topic in wikipedia.search(topic):
@@ -106,6 +109,27 @@ class conversational_agent():
             self.__askfororder(self.interestList)
         else:
             self.__startLearning(self.interestList[0])
+
+    def __anymore_questions(self):
+        prompt = random.choice(["Do you have any more questions about this topic?",
+                                "Were you hoping to learn anything else about this topic?"])
+        answer = input(prompt + " \n>>> ")
+
+        # analyse for "no"
+        if "no" in answer.lower():
+            print("Alright, ask again soon!") 
+            exit 
+
+        concepts = self.watsonobj.analyze(text=answer, features=Features(concepts=ConceptsOptions(limit=3)))
+        
+        Summarize(" ".join([c.text for c in concepts.concepts]), self.wiki_page.text)
+
+        self.__anymore_questions()
+
+
+
+
+
 
     def __askfororder(self, interests):
         question = random.choice(["Which would you like to learn about first?",
