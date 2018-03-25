@@ -107,12 +107,13 @@ class conversational_agent():
 
         self.interestList = self.interestList + [interest for interest in answers]
 
-        if len(answers) > 1:
-            self.__askfororder(answers)
-        elif len(self.interestList) > 1:
-            self.__askfororder(self.interestList)
-        else:
-            self.__breakDownSection(self.interestList[0])
+        while len(self.interestList) > 0:
+            if len(answers) > 1:
+                self.__askfororder(answers)
+            elif len(self.interestList) > 1:
+                self.__askfororder(self.interestList)
+            else:
+                self.__breakDownSection(self.interestList[0])
 
     def anymore_questions(self):
         prompt = random.choice(["Do you have any more questions about this topic?",
