@@ -20,7 +20,7 @@ class conversational_agent():
 
     def __init__(self): 
         self.watsonobj = watson(username=username, password=password, version="2017-02-27")
-        self.wiki_wiki = wikipediaapi.Wikipedia('en')
+        self.wikiapi = wikipediaapi.Wikipedia('en')
         self.interestList = []
 
     def prompt(self): 
@@ -54,8 +54,8 @@ class conversational_agent():
         if topic in wikipedia.search(topic):
             print("Pulling from wiki page on " + topic + ".")
             self._topic = topic
-            self.wiki_page = wikipedia.WikipediaPage(self._topic)
-            self.wiki_wiki_page = self.wiki_wiki.page(self._topic)
+            # self.wiki_page = wikipedia.WikipediaPage(self._topic)
+            self.wiki_wiki_page = self.wikiapi.page(self._topic)
 
         # if close match
         elif wikipedia.suggest(topic) is not None:
@@ -120,15 +120,17 @@ class conversational_agent():
         answer = input(prompt + " \n>>> ")
 
         # analyse for "no"
-        if "no" in answer.lower():
+        if answer.lower() == "no":
             print("Alright, ask again soon!") 
-            exit 
+            exit()
 
-        concepts = self.watsonobj.analyze(text=answer, features=Features(concepts=ConceptsOptions(limit=3)))
-        
-        Summarize(" ".join([c.text for c in concepts.concepts]), self.wiki_page.text)
+        try:
+            concepts = self.watsonobj.analyze(text=answer, features=Features(concepts=ConceptsOptions(limit=3)))
+            print(Summarize(" ".join([c['text'] for c in concepts['concepts']]), self.wiki_wiki_page.text, 5))
+        except Exception:
+            print(Summarize(self._topic, self.wiki_wiki_page.text, 10))
 
-        self.__anymore_questions()
+        self.anymore_questions()
 
 
 

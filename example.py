@@ -12,8 +12,8 @@ if agent.wiki_wiki_page.summary != "":
 # present subtopic options
 agent.present_options()
 
-# # anything more
-# agent.anymore_questions()
+# anything more
+agent.anymore_questions()
 
 
 # exec(open("example.py").read())
