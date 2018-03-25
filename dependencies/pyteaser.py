@@ -72,27 +72,11 @@ stopWords = set([
 ])
 ideal = 20.0
 
-
-def SummarizeUrl(url):
-    summaries = []
-    try:
-        article = grab_link(url)
-    except IOError:
-        print('IOError')
-        return None
-
-    if not (article and article.cleaned_text and article.title):
-        return None
-
-    summaries = Summarize(str(article.title),
-                          str(article.cleaned_text))
-    return summaries
-
 # MODIFIED FROM ORIGINAL
 def Summarize(query, text, num_sen=None):
     sentences = split_sentences(text)
     if num_sen is None: 
-        num_sen = floor(len(sentences) / 5)
+        num_sen = floor(len(sentences) / 2)
 
     indices = {c: i for i, c in enumerate(sentences)}
     keys = keywords(text)
@@ -109,17 +93,6 @@ def Summarize(query, text, num_sen=None):
     ordered = sorted(senrank, key=indices.get)
 
     return " ".join(ordered)
-
-def grab_link(inurl):
-    #extract article information using Python Goose
-    from goose import Goose
-    try:
-        article = Goose().extract(url=inurl)
-        return article
-    except ValueError:
-        print('Goose failed to extract article from url')
-        return None
-    return None
 
 
 def score(sentences, queryWords, keywords):
@@ -218,8 +191,7 @@ def split_sentences(text):
     second to last line adds this item to the s_iter list and the last line returns the full list.
     '''
 
-    sentences = regex_split(
-        u'(?<![A-ZА-ЯЁ])([.!?]"?)(?=\s+\"?[A-ZА-ЯЁ])', text, flags=REGEX_UNICODE)
+    sentences = regex_split(u'(?<![A-ZА-ЯЁ])([.!?]"?)(?=\s+\"?[A-ZА-ЯЁ])', text, flags=REGEX_UNICODE)
     s_iter = zip(*[iter(sentences[:-1])] * 2)
     s_iter = [''.join(map(str, y)).lstrip() for y in s_iter]
     s_iter.append(sentences[-1])
