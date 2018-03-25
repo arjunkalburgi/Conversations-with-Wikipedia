@@ -74,8 +74,8 @@ class conversational_agent():
         if "References" in choices : choices.remove("References")
         if "Further reading" in choices : choices.remove("Further reading")
         if "External links" in choices : choices.remove("External links")
-        choices.append("Other")
         choices.append("None of these")
+        choices.append("Exit")
 
         question = random.choice(["Would you like to learn about any of these?",
                                   "Are you interested in any of these?", 
@@ -99,10 +99,10 @@ class conversational_agent():
             print("Please select one by using the right arrow key.")
             self.present_options()
 
-        if "Other" in answers: 
-            print("Other is not implemented yet")
+        if "None of these" in answers:
+            print("The ability to request custom content on a page is not implemented yet")
             return 
-        if "None of these" in answers: 
+        if "Exit" in answers: 
             print("What to do here is not implemented yet")
             return 
 
@@ -202,9 +202,11 @@ class conversational_agent():
         if answer.lower() == "no":
             return 
 
+        # Did they ask for a subsection
+        
+
         if keywords is None: 
             keywords = []
-        
         keywords.append(answer)
 
         try:
