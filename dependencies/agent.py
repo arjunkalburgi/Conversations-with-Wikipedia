@@ -37,19 +37,19 @@ class conversational_agent():
             return 
 
         # set proper topic 
-        self.__getTopic(raw_topic)
+        self.getTopic(raw_topic)
 
         # read summary 
         if self.wiki_wiki_page.summary != "":
             print(Summarize(self._topic, self.wiki_wiki_page.summary))
 
         # present subtopic options 
-        self.__present_options()
+        self.present_options()
 
         # anything more 
-        self.__anymore_questions()
+        self.anymore_questions()
 
-    def __getTopic(self, topic):
+    def getTopic(self, topic):
         # if match
         if topic in wikipedia.search(topic):
             print("Pulling from wiki page on " + topic + ".")
@@ -67,12 +67,12 @@ class conversational_agent():
             print("That topic didn't work, please try again")
             exit()
 
-    def __present_options(self): 
+    def present_options(self): 
 
-        choices = [section.title for section in self.wiki_wiki_page.sections]
-        choices.remove("See also")
-        choices.remove("References")
-        choices.remove("External links")
+        choices = [section.title[:-4] for section in self.wiki_wiki_page.sections]
+        if "See also" in choices : choices.remove("See also")
+        if "References" in choices : choices.remove("References")
+        if "External links" in choices : choices.remove("External links")
         choices.append("Other")
         choices.append("None of these")
 
@@ -92,25 +92,29 @@ class conversational_agent():
                               ),
         ]
 
-        answers = inquirer.prompt(questions)
+        answers = inquirer.prompt(questions)[self._topic]
+
+        if answers is []: 
+            print("Please select one by using the right arrow key.")
+            self.present_options()
 
         if "Other" in answers: 
             print("Other is not implemented yet")
-            exit 
+            return 
         if "None of these" in answers: 
             print("What to do here is not implemented yet")
-            exit 
+            return 
 
         self.interestList = self.interestList + [self._topic + "::" + interest for interest in answers[self._topic]]
 
-        if len(answers[self._topic]) > 1:
-            self.__askfororder(answers[self._topic])
+        if len(answers) > 1:
+            self.__askfororder(answers)
         elif len(self.interestList) > 1:
             self.__askfororder(self.interestList)
         else:
-            self.__startLearning(self.interestList[0])
+            self.__breakDownSection(self.interestList[0])
 
-    def __anymore_questions(self):
+    def anymore_questions(self):
         prompt = random.choice(["Do you have any more questions about this topic?",
                                 "Were you hoping to learn anything else about this topic?"])
         answer = input(prompt + " \n>>> ")
@@ -145,9 +149,10 @@ class conversational_agent():
 
         answer = inquirer.prompt(questions)
 
-        self.__startLearning(answer["learnnow"])
+        self.__breakDownSection(answer["learnnow"])
 
-    def __startLearning(self, sectionname):
+    def __breakDownSection(self, sectionname):
+        # find the section in the wikipedia page 
         section = next((x for x in self.wiki_wiki_page.sections if x.title == sectionname), None)
 
         if not section.sections:
@@ -158,10 +163,12 @@ class conversational_agent():
     def __learnSection(self, sectionObject): 
         # goes here when page section does not have subsections 
         # create summary using section 
-        # def __requestion(self, )        
+        # def __requestion(self, )   
+        pass     
 
     def __learnSubsection(self, sectionObject): 
         # goes here when page section has subsections
         # get all subsection titles 
         # create summary using subsection titles as query 
-        # def __requestion(self, )        
+        # def __requestion(self, )     
+        pass   
