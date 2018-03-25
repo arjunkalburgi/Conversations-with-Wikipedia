@@ -13,7 +13,7 @@ if agent.wiki_wiki_page.summary != "":
 agent.present_options()
 
 # anything more
-agent.anymore_questions()
+# agent.anymore_questions()
 
 
 # exec(open("example.py").read())

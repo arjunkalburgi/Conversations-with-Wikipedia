@@ -105,7 +105,7 @@ class conversational_agent():
             print("What to do here is not implemented yet")
             return 
 
-        self.interestList = self.interestList + [self._topic + "::" + interest for interest in answers[self._topic]]
+        self.interestList = self.interestList + [interest for interest in answers]
 
         if len(answers) > 1:
             self.__askfororder(answers)
@@ -155,7 +155,7 @@ class conversational_agent():
 
     def __breakDownSection(self, sectionname):
         # find the section in the wikipedia page 
-        section = next((x for x in self.wiki_wiki_page.sections if x.title == sectionname), None)
+        section = next((x for x in self.wiki_wiki_page.sections if x.title[:-4] == sectionname), None)
 
         if not section.sections:
             self.__learnSection(section)
@@ -166,6 +166,7 @@ class conversational_agent():
         # goes here when page section does not have subsections 
         # create summary using section 
         # def __requestion(self, )   
+        print("__learnSection")
         pass     
 
     def __learnSubsection(self, sectionObject): 
@@ -173,4 +174,5 @@ class conversational_agent():
         # get all subsection titles 
         # create summary using subsection titles as query 
         # def __requestion(self, )     
+        print("__learnSubsection")
         pass   
