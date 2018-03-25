@@ -3,7 +3,7 @@ from dependencies.pyteaser import Summarize
 
 agent = conversational_agent()
 
-agent.getTopic("Cooking")
+agent.getTopic("Phil Knight")
 
 # read summary
 if agent.wiki_wiki_page.summary != "":

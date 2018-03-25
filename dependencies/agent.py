@@ -69,7 +69,7 @@ class conversational_agent():
 
     def present_options(self): 
 
-        choices = [section.title[:-4] for section in self.wiki_wiki_page.sections]
+        choices = [section.title for section in self.wiki_wiki_page.sections]
         if "See also" in choices : choices.remove("See also")
         if "References" in choices : choices.remove("References")
         if "External links" in choices : choices.remove("External links")
@@ -156,7 +156,7 @@ class conversational_agent():
 
     def __breakDownSection(self, sectionname):
         # find the section in the wikipedia page 
-        section = next((x for x in self.wiki_wiki_page.sections if x.title[:-4] == sectionname), None)
+        section = next((x for x in self.wiki_wiki_page.sections if x.title == sectionname), None)
 
         if not section.sections:
             self.__learnSection(section)
@@ -166,13 +166,13 @@ class conversational_agent():
     def __learnSection(self, sectionObject): 
         # goes here when page section does not have subsections 
         # create summary using section 
-        Summarize(" ".join([self._topic, sectionObject.title[:-4]]),sectionObject.text)
+        Summarize(" ".join([self._topic, sectionObject.title]),sectionObject.text)
 
         # Ask for more explore 
         self.__exploreSection(sectionObject)
 
         # remove from interest list 
-        self.interestList.remove(sectionObject.title[:-4])
+        self.interestList.remove(sectionObject.title)
 
     def __learnSubsection(self, sectionObject): 
         # goes here when page section has subsections
