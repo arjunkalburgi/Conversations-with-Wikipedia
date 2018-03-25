@@ -129,7 +129,7 @@ class conversational_agent():
             concepts = self.watsonobj.analyze(text=answer, features=Features(concepts=ConceptsOptions(limit=3)))
             print(Summarize(" ".join([c['text'] for c in concepts['concepts']]), self.wiki_wiki_page.text, 5))
         except Exception:
-            print(Summarize(self._topic, self.wiki_wiki_page.text, 10))
+            print(Summarize(answer, self.wiki_wiki_page.text, 10))
 
         self.anymore_questions()
 
@@ -166,14 +166,43 @@ class conversational_agent():
     def __learnSection(self, sectionObject): 
         # goes here when page section does not have subsections 
         # create summary using section 
-        # def __requestion(self, )   
-        print("__learnSection")
-        pass     
+        Summarize(" ".join([self._topic, sectionObject.title[:-4]]),sectionObject.text)
+
+        # Ask for more explore 
+        self.__exploreSection(sectionObject)
+
+        # remove from interest list 
+        self.interestList.remove(sectionObject.title[:-4])
 
     def __learnSubsection(self, sectionObject): 
         # goes here when page section has subsections
         # get all subsection titles 
         # create summary using subsection titles as query 
-        # def __requestion(self, )     
         print("__learnSubsection")
-        pass   
+
+    def __exploreSection(self, sectionObject, keywords=None): 
+        prompt = random.choice(["Do you have any interests here?",
+                                "Does anything interest you, I can explain further."])
+        answer = input(prompt + " \n>>> ")
+
+        # analyse for "no"
+        if answer.lower() == "no":
+            return 
+
+        if keywords is None: 
+            keywords = []
+
+        keywords.append(answer)
+
+        try:
+            concepts = self.watsonobj.analyze(text=answer, features=Features(concepts=ConceptsOptions(limit=3)))
+            concepts = concepts + keywords
+            print(Summarize(" ".join([c['text'] for c in concepts['concepts']]), sectionObject.text))
+        except Exception:
+            print(Summarize(keywords, self.wiki_wiki_page.text))
+
+        # Feature: provide own section list 
+        # print("This section has it's own related link")
+        # def __suggestTopicResources(self, sectionObject):
+
+        self.__exploreSection(sectionObject, keywords)
