@@ -72,6 +72,7 @@ class conversational_agent():
         choices = [section.title for section in self.wiki_wiki_page.sections]
         if "See also" in choices : choices.remove("See also")
         if "References" in choices : choices.remove("References")
+        if "Further reading" in choices : choices.remove("Further reading")
         if "External links" in choices : choices.remove("External links")
         choices.append("Other")
         choices.append("None of these")
@@ -110,9 +111,11 @@ class conversational_agent():
         while len(self.interestList) > 0:
             if len(answers) > 1:
                 self.__askfororder(answers)
+                answers = []
             elif len(self.interestList) > 1:
                 self.__askfororder(self.interestList)
             else:
+                print("Alright, looking into " + self.interestList[0])
                 self.__breakDownSection(self.interestList[0])
 
     def anymore_questions(self):
@@ -166,7 +169,7 @@ class conversational_agent():
     def __learnSection(self, sectionObject): 
         # goes here when page section does not have subsections 
         # create summary using section 
-        Summarize(" ".join([self._topic, sectionObject.title]),sectionObject.text)
+        print(Summarize(" ".join([self._topic, sectionObject.title]), sectionObject.text))
 
         # Ask for more explore 
         self.__exploreSection(sectionObject)
@@ -177,8 +180,18 @@ class conversational_agent():
     def __learnSubsection(self, sectionObject): 
         # goes here when page section has subsections
         # get all subsection titles 
+        keywords = [x.title for x in sectionObject.sections]
+        for section in sectionObject.sections:
+            keywords = keywords + [x.title for x in section.sections]
+
         # create summary using subsection titles as query 
-        print("__learnSubsection")
+        print(Summarize(" ".join(keywords), str(sectionObject), 7))
+
+        # Ask for more explore
+        self.__exploreSection(sectionObject)
+
+        # remove from interest list
+        self.interestList.remove(sectionObject.title)
 
     def __exploreSection(self, sectionObject, keywords=None): 
         prompt = random.choice(["Do you have any interests here?",
@@ -191,15 +204,14 @@ class conversational_agent():
 
         if keywords is None: 
             keywords = []
-
+        
         keywords.append(answer)
 
         try:
-            concepts = self.watsonobj.analyze(text=answer, features=Features(concepts=ConceptsOptions(limit=3)))
-            concepts = concepts + keywords
-            print(Summarize(" ".join([c['text'] for c in concepts['concepts']]), sectionObject.text))
+            concepts = self.watsonobj.analyze(text=" ".join(keywords), features=Features(concepts=ConceptsOptions(limit=3)))
+            print(Summarize(" ".join([c['text'] for c in concepts['concepts']]), str(sectionObject)))
         except Exception:
-            print(Summarize(keywords, self.wiki_wiki_page.text))
+            print(Summarize(" ".join(keywords), str(sectionObject)))
 
         # Feature: provide own section list 
         # print("This section has it's own related link")
