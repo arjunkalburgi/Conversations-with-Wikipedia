@@ -9,7 +9,7 @@
 # coding=utf-8
 from collections import Counter
 from operator import itemgetter
-from math import fabs, floor
+from math import fabs, ceil
 from re import split as regex_split, sub as regex_sub, UNICODE as REGEX_UNICODE
 
 stopWords = set([
@@ -76,7 +76,10 @@ ideal = 20.0
 def Summarize(query, text, num_sen=None):
     sentences = split_sentences(text)
     if num_sen is None: 
-        num_sen = floor(len(sentences) / 2)
+        if len(sentences) < ceil(3*len(sentences) - 5): 
+            num_sen = len(sentences)
+        else: 
+            num_sen = ceil(3*len(sentences) - 3)
 
     indices = {c: i for i, c in enumerate(sentences)}
     keys = keywords(text)
