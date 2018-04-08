@@ -1,15 +1,15 @@
 """ have a conversation """
 
-import wikipedia, wikipediaapi
-import inquirer, random
-
 # This project
 from .helper import PromptMixin, ConverseMixin
-from .hiddenkeysfilled import username, password
 from .pyteaser import Summarize
+from .hiddenkeysfilled import username, password
 
 # Watson API
 from watson_developer_cloud import NaturalLanguageUnderstandingV1 as watson
+
+# Other 
+import wikipediaapi, inquirer, random
 
 
 class ConversationalAgent(PromptMixin, ConverseMixin):
