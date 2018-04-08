@@ -1,7 +1,7 @@
 """ have a conversation """
 
 # This project
-from .helper import PromptMixin, ConverseMixin
+from .agenthelper import PromptMixin, ConverseMixin
 from .pyteaser import Summarize
 from .hiddenkeysfilled import username, password
 
