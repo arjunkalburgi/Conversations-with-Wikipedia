@@ -5,9 +5,11 @@
 import wikipedia, wikipediaapi
 import inquirer, random
 
+# This project
 from .hiddenkeysfilled import username, password
 from .pyteaser import Summarize
 
+# Watson API
 from watson_developer_cloud import NaturalLanguageUnderstandingV1 as watson
 from watson_developer_cloud.natural_language_understanding_v1 import Features, ConceptsOptions, EntitiesOptions, KeywordsOptions, RelationsOptions, SemanticRolesOptions
 
@@ -37,23 +39,7 @@ class conversational_agent():
             print("Explaining 'how' is not yet supported.")
             return 
 
-    def getTopic(self, topic):
-        # if match
-        if topic in wikipedia.search(topic):
-            print("Pulling from wiki page on " + topic + ".")
-            self._topic = topic
-            # self.wiki_page = wikipedia.WikipediaPage(self._topic)
-            self.wiki_wiki_page = self.wikiapi.page(self._topic)
-
-        # if close match
-        elif wikipedia.suggest(topic) is not None:
-            print("Pulling from " + wikipedia.suggest(topic) +
-                  ", if this isn't correct please exit and specify a different query.")
-            self._topic = wikipedia.suggest(topic)
-        # no matches
-        else:
-            print("That topic didn't work, please try again")
-            exit()
+        self.__gettopic(raw_topic)
 
     def summarize(self): 
         if self.wiki_wiki_page.summary != "":
@@ -128,14 +114,28 @@ class conversational_agent():
         self.followup()
 
 
+    def __gettopic(self, topic):
+        # if match
+        if topic in wikipedia.search(topic):
+            print("Pulling from wiki page on " + topic + ".")
+            self._topic = topic
+            # self.wiki_page = wikipedia.WikipediaPage(self._topic)
+            self.wiki_wiki_page = self.wikiapi.page(self._topic)
 
-
-
+        # if close match
+        elif wikipedia.suggest(topic) is not None:
+            print("Pulling from " + wikipedia.suggest(topic) +
+                ", if this isn't correct please exit and specify a different query.")
+            self._topic = wikipedia.suggest(topic)
+        # no matches
+        else:
+            print("That topic didn't work, please try again")
+            exit()
 
     def __askfororder(self, interests):
         question = random.choice(["Which would you like to learn about first?",
-                                  "Which of these would you like to learn about first?",
-                                  "Which one should I go over first?"])
+                                    "Which of these would you like to learn about first?",
+                                    "Which one should I go over first?"])
 
         questions = [
             inquirer.List("learnnow",
