@@ -6,6 +6,7 @@ import wikipedia, wikipediaapi
 import inquirer, random
 
 # This project
+from .helper import PromptMixin, ConverseMixin
 from .hiddenkeysfilled import username, password
 from .pyteaser import Summarize
 
@@ -14,8 +15,7 @@ from watson_developer_cloud import NaturalLanguageUnderstandingV1 as watson
 from watson_developer_cloud.natural_language_understanding_v1 import Features, ConceptsOptions, EntitiesOptions, KeywordsOptions, RelationsOptions, SemanticRolesOptions
 
 
-
-class conversational_agent():
+class ConversationalAgent(PromptMixin, ConverseMixin):
     """
 
     """
@@ -39,7 +39,7 @@ class conversational_agent():
             print("Explaining 'how' is not yet supported.")
             return 
 
-        self.__gettopic(raw_topic)
+        self.gettopic(raw_topic)
 
     def summarize(self): 
         if self.wiki_wiki_page.summary != "":
@@ -87,13 +87,13 @@ class conversational_agent():
 
         while len(self.interestList) > 0:
             if len(answers) > 1:
-                self.__askfororder(answers)
+                self.askfororder(answers)
                 answers = []
             elif len(self.interestList) > 1:
-                self.__askfororder(self.interestList)
+                self.askfororder(self.interestList)
             else:
                 print("Alright, looking into " + self.interestList[0])
-                self.__breakDownSection(self.interestList[0])
+                self.breakDownSection(self.interestList[0])
 
     def followup(self):
         prompt = random.choice(["Do you have any more questions about this topic?",
@@ -113,101 +113,3 @@ class conversational_agent():
 
         self.followup()
 
-
-    def __gettopic(self, topic):
-        # if match
-        if topic in wikipedia.search(topic):
-            print("Pulling from wiki page on " + topic + ".")
-            self._topic = topic
-            # self.wiki_page = wikipedia.WikipediaPage(self._topic)
-            self.wiki_wiki_page = self.wikiapi.page(self._topic)
-
-        # if close match
-        elif wikipedia.suggest(topic) is not None:
-            print("Pulling from " + wikipedia.suggest(topic) +
-                ", if this isn't correct please exit and specify a different query.")
-            self._topic = wikipedia.suggest(topic)
-        # no matches
-        else:
-            print("That topic didn't work, please try again")
-            exit()
-
-    def __askfororder(self, interests):
-        question = random.choice(["Which would you like to learn about first?",
-                                    "Which of these would you like to learn about first?",
-                                    "Which one should I go over first?"])
-
-        questions = [
-            inquirer.List("learnnow",
-                            message=question,
-                            choices=interests,
-                            ),
-        ]
-
-        answer = inquirer.prompt(questions)
-
-        self.__breakDownSection(answer["learnnow"])
-
-    def __breakDownSection(self, sectionname):
-        # find the section in the wikipedia page 
-        section = next((x for x in self.wiki_wiki_page.sections if x.title == sectionname), None)
-
-        if not section.sections:
-            self.__learnSection(section)
-        else:
-            self.__learnSubsection(section)
-
-    def __learnSection(self, sectionObject): 
-        # goes here when page section does not have subsections 
-        # create summary using section 
-        print(Summarize(" ".join([self._topic, sectionObject.title]), sectionObject.text))
-
-        # Ask for more explore 
-        self.__exploreSection(sectionObject)
-
-        # remove from interest list 
-        self.interestList.remove(sectionObject.title)
-
-    def __learnSubsection(self, sectionObject): 
-        # goes here when page section has subsections
-        # get all subsection titles 
-        keywords = [x.title for x in sectionObject.sections]
-        for section in sectionObject.sections:
-            keywords = keywords + [x.title for x in section.sections]
-
-        # create summary using subsection titles as query 
-        print(Summarize(" ".join(keywords), str(sectionObject), 7))
-
-        # Ask for more explore
-        self.__exploreSection(sectionObject)
-
-        # remove from interest list
-        self.interestList.remove(sectionObject.title)
-
-    def __exploreSection(self, sectionObject, keywords=None): 
-        prompt = random.choice(["Do you have any interests here?",
-                                "Does anything interest you, I can explain further."])
-        answer = input(prompt + " \n>>> ")
-
-        # analyse for "no"
-        if answer.lower() == "no":
-            return 
-
-        # Did they ask for a subsection
-        
-
-        if keywords is None: 
-            keywords = []
-        keywords.append(answer)
-
-        try:
-            concepts = self.watsonobj.analyze(text=" ".join(keywords), features=Features(concepts=ConceptsOptions(limit=3)))
-            print(Summarize(" ".join([c['text'] for c in concepts['concepts']]), str(sectionObject)))
-        except Exception:
-            print(Summarize(" ".join(keywords), str(sectionObject)))
-
-        # Feature: provide own section list 
-        # print("This section has it's own related link")
-        # def __suggestTopicResources(self, sectionObject):
-
-        self.__exploreSection(sectionObject, keywords)

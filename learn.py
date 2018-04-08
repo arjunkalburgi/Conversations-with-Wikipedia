@@ -1,8 +1,8 @@
 
-from dependencies.agent import conversational_agent
+from dependencies.agent import ConversationalAgent
 
 
-agent = conversational_agent() 
+agent = ConversationalAgent()
 
 
 agent.prompt()
