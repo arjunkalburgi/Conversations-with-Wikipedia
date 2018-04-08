@@ -1,7 +1,5 @@
 """ have a conversation """
 
-# import re, requests, json, inquirer, unicodedata, Algorithmia, 
-
 import wikipedia, wikipediaapi
 import inquirer, random
 
@@ -12,7 +10,6 @@ from .pyteaser import Summarize
 
 # Watson API
 from watson_developer_cloud import NaturalLanguageUnderstandingV1 as watson
-from watson_developer_cloud.natural_language_understanding_v1 import Features, ConceptsOptions, EntitiesOptions, KeywordsOptions, RelationsOptions, SemanticRolesOptions
 
 
 class ConversationalAgent(PromptMixin, ConverseMixin):
@@ -105,11 +102,7 @@ class ConversationalAgent(PromptMixin, ConverseMixin):
             print("Alright, ask again soon!") 
             exit()
 
-        try:
-            concepts = self.watsonobj.analyze(text=answer, features=Features(concepts=ConceptsOptions(limit=3)))
-            print(Summarize(" ".join([c['text'] for c in concepts['concepts']]), self.wiki_wiki_page.text, 5))
-        except Exception:
-            print(Summarize(answer, self.wiki_wiki_page.text, 10))
+        self.summarizewithkeywords(answer, self.wiki_wiki_page.text)
 
         self.followup()
 

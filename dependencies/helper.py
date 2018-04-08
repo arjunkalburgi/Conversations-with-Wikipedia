@@ -1,7 +1,6 @@
-import wikipedia
-import inquirer
-import random
-
+import wikipedia, inquirer, random
+from .pyteaser import Summarize
+from watson_developer_cloud.natural_language_understanding_v1 import Features, ConceptsOptions
 
 class PromptMixin():
 
@@ -24,6 +23,7 @@ class PromptMixin():
             exit()
 
 class ConverseMixin(): 
+    
     def askfororder(self, interests):
         question = random.choice(["Which would you like to learn about first?",
                                     "Which of these would you like to learn about first?",
@@ -92,16 +92,16 @@ class ConverseMixin():
             keywords = []
         keywords.append(answer)
 
-        try:
-            concepts = self.watsonobj.analyze(text=" ".join(
-                keywords), features=Features(concepts=ConceptsOptions(limit=3)))
-            print(Summarize(
-                " ".join([c['text'] for c in concepts['concepts']]), str(sectionObject)))
-        except Exception:
-            print(Summarize(" ".join(keywords), str(sectionObject)))
-
+        self.summarizewithkeywords(keywords, str(sectionObject))
         # Feature: provide own section list
         # print("This section has it's own related link")
         # def suggestTopicResources(self, sectionObject):
 
-        self.exploreSection(sectionObject, keywords)
+        self.exploreSection(sectionObject, " ".join(keywords))
+
+    def summarizewithkeywords(self, keywords, text, words=None): 
+        try:
+            concepts = self.watsonobj.analyze(text=keywords, features=Features(concepts=ConceptsOptions(limit=3)))
+            print(Summarize(" ".join([c['text'] for c in concepts['concepts']]), text, words))
+        except Exception:
+            print(Summarize(keywords, text, words))
