@@ -24,6 +24,7 @@ class conversational_agent():
         self.interestList = []
 
     def prompt(self): 
+        print("Hello, ", end='')
         question = random.choice(["What would you like to learn about?",
                                   "What topic do you want to know more about?", 
                                   "What do you want to learn about?"])
@@ -35,19 +36,6 @@ class conversational_agent():
         if "how" in raw_topic: 
             print("Explaining 'how' is not yet supported.")
             return 
-
-        # set proper topic 
-        self.getTopic(raw_topic)
-
-        # read summary 
-        if self.wiki_wiki_page.summary != "":
-            print(Summarize(self._topic, self.wiki_wiki_page.summary))
-
-        # present subtopic options 
-        self.present_options()
-
-        # anything more 
-        self.anymore_questions()
 
     def getTopic(self, topic):
         # if match
@@ -67,8 +55,11 @@ class conversational_agent():
             print("That topic didn't work, please try again")
             exit()
 
-    def present_options(self): 
+    def summarize(self): 
+        if self.wiki_wiki_page.summary != "":
+            print(Summarize(self._topic, self.wiki_wiki_page.summary))
 
+    def converse(self): 
         choices = [section.title for section in self.wiki_wiki_page.sections]
         if "See also" in choices : choices.remove("See also")
         if "References" in choices : choices.remove("References")
@@ -97,7 +88,7 @@ class conversational_agent():
 
         if answers is []: 
             print("Please select one by using the right arrow key.")
-            self.present_options()
+            self.converse()
 
         if "None of these" in answers:
             print("The ability to request custom content on a page is not implemented yet")
@@ -118,7 +109,7 @@ class conversational_agent():
                 print("Alright, looking into " + self.interestList[0])
                 self.__breakDownSection(self.interestList[0])
 
-    def anymore_questions(self):
+    def followup(self):
         prompt = random.choice(["Do you have any more questions about this topic?",
                                 "Were you hoping to learn anything else about this topic?"])
         answer = input(prompt + " \n>>> ")
@@ -134,7 +125,7 @@ class conversational_agent():
         except Exception:
             print(Summarize(answer, self.wiki_wiki_page.text, 10))
 
-        self.anymore_questions()
+        self.followup()
 
 
 
