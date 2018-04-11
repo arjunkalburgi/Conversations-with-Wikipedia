@@ -1,4 +1,4 @@
-# Conversations with Wikipedia
+![alt text](dependencies/titleimage.png "Conversations With Wikipedia")
 
 ### How it works / Introduction
 
