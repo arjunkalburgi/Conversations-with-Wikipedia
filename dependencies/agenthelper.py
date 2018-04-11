@@ -53,8 +53,7 @@ class ConverseMixin():
     def learnSection(self, sectionObject):
         # goes here when page section does not have subsections
         # create summary using section
-        print(
-            Summarize(" ".join([self._topic, sectionObject.title]), sectionObject.text))
+        print(Summarize(" ".join([self._topic, sectionObject.title]), sectionObject.text, 3))
 
         # Ask for more explore
         self.exploreSection(sectionObject)
@@ -84,7 +83,7 @@ class ConverseMixin():
         answer = input(prompt + " \n>>> ")
 
         # analyse for "no"
-        if answer.lower() == "no":
+        if answer.lower().strip() == "no":
             return
 
         # Did they ask for a subsection
@@ -105,4 +104,4 @@ class ConverseMixin():
             concepts = self.watsonobj.analyze(text=keywords, features=Features(concepts=ConceptsOptions(limit=3)))
             print(Summarize(" ".join([c['text'] for c in concepts['concepts']]), text, words))
         except Exception:
-            print(Summarize(keywords, text, words))
+            print(Summarize(" ".join(keywords), text, words))

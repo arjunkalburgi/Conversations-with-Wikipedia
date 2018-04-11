@@ -40,7 +40,7 @@ class ConversationalAgent(PromptMixin, ConverseMixin):
 
     def summarize(self): 
         if self.wiki_wiki_page.summary != "":
-            print(Summarize(self._topic, self.wiki_wiki_page.summary))
+            print(Summarize(self._topic, self.wiki_wiki_page.summary, 5))
 
     def converse(self): 
         choices = [section.title for section in self.wiki_wiki_page.sections]
@@ -100,7 +100,7 @@ class ConversationalAgent(PromptMixin, ConverseMixin):
         # analyse for "no"
         if answer.lower() == "no":
             print("Alright, ask again soon!") 
-            exit()
+            return 
 
         self.summarizewithkeywords(answer, self.wiki_wiki_page.text)
 

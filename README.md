@@ -38,6 +38,10 @@ agent.followup()
 Work still needs to be done to improve the text summarization and the overall conversational flow.
 
 
+### Research Paper
+The research paper to go with the project will be linked here once completed. 
+
+
 ### Build instructions 
 ```
 python setup.py
