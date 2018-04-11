@@ -23,7 +23,7 @@ The agent then starts the conversation by summarizing the topic using the PyTeas
 agent.summarize()
 ```
 
-The agent then delves into the article, attempting to find more information for you to learn about. It takes advantage of page’s structure to help find you more information, constantly asking you if you'd like to explain further. 
+The agent then delves into the article, attempting to find more information for you to learn about. It takes advantage of page’s structure to help find you more information, constantly asking you if you'd like it to explain further. 
 
 ```
 agent.converse()
@@ -39,8 +39,11 @@ Work still needs to be done to improve the text summarization and the overall co
 
 
 ### Build instructions 
- - `python setup.py`
-
+```
+python setup.py
+```
 
 ### Run instructions 
- - `python learn.py`
+```
+python learn.py
+```
