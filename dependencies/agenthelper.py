@@ -5,7 +5,8 @@ from watson_developer_cloud.natural_language_understanding_v1 import Features, C
 class PromptMixin():
 
     def gettopic(self, topic):
-                # if match
+        topic = topic.strip()
+        # if match
         if topic in wikipedia.search(topic):
             print("Pulling from wiki page on " + topic + ".")
             self._topic = topic
