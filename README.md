@@ -39,7 +39,7 @@ Work still needs to be done to improve the text summarization and the overall co
 
 
 ### Research Paper
-The research paper to go with the project will be linked here once completed. 
+https://medium.com/arjunkalburgi/conversations-with-wikipedia-research-paper-4b7717873087
 
 
 ### Build instructions 
